@@ -104,7 +104,7 @@ void QtGuiApplication::startWork()
 	if (runningFlag)
 	{
 		runningFlag = false;
-		plcWorker->stopRunning();
+		emit stopThread();
 		plcWorkThread.quit();
 		plcWorkThread.wait();
 		ui.runButton->setText(u8"ÔËÐÐ");
@@ -120,6 +120,7 @@ void QtGuiApplication::startWork()
 		plcWorker = new WorkerOmron();
 		plcWorker->moveToThread(&plcWorkThread);
 		connect(this, &QtGuiApplication::startThread, plcWorker, &WorkerOmron::initAll);
+		connect(this, &QtGuiApplication::stopThread, plcWorker, &WorkerOmron::stopRunning, Qt::DirectConnection);
 		connect(&plcWorkThread, &QThread::finished, plcWorker, &QObject::deleteLater);
 		connect(plcWorker, &WorkerOmron::workMsgShow, this, &QtGuiApplication::showMsg);
 		runningFlag = true;
