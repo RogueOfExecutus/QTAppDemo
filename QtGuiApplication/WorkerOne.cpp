@@ -12,10 +12,14 @@ WorkerOne::~WorkerOne()
 {
 }
 
-void WorkerOne::initAll(QString portName)
+void WorkerOne::initAll()
 {
 }
 
 void WorkerOne::recTrigger(std::string value)
+{
+}
+
+void WorkerOne::stopRunning()
 {
 }

@@ -30,14 +30,13 @@ public slots:
 	void stopRunning();
 
 private:
-	QSerialPort *plcPort;
-	QTimer *timer;
+	QSerialPort* plcPort;
+	QTimer* timer;
 	int timeoutTimes;
 	QMutex runTypeMtx;
 	bool RunningFlag;
 	bool plcCRFlag;
 	std::string plcMsg;
-	bool sendFlag;
 	QMutex sendMsgMtx;
 	std::vector<std::string> msgs;
 	const std::string checkTrigger = "123456\r";

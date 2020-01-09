@@ -10,7 +10,6 @@ WorkerOmron::WorkerOmron(QObject* parent)
 	timeoutTimes = 0;
 	RunningFlag = false;
 	plcCRFlag = true;
-	sendFlag = false;
 }
 
 WorkerOmron::~WorkerOmron()
@@ -54,14 +53,10 @@ void WorkerOmron::plcPortSend()
 {
 	std::string msg = checkTrigger;
 	sendMsgMtx.lock();
-	if (sendFlag)
+	if (!msgs.empty())
 	{
-		if (!msgs.empty())
-		{
-			msg = msgs[0];
-			msgs.erase(msgs.begin());
-			if (msgs.empty()) sendFlag = false;
-		}
+		msg = msgs[0];
+		msgs.erase(msgs.begin());
 	}
 	sendMsgMtx.unlock();
 	//if (msg == "") msg = checkTrigger;
@@ -98,7 +93,6 @@ void WorkerOmron::add2SendMsg(std::string msg)
 {
 	sendMsgMtx.lock();
 	msgs.push_back(msg);
-	sendFlag = true;
 	sendMsgMtx.unlock();
 }
 

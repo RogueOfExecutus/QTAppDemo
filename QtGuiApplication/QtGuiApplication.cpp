@@ -123,6 +123,7 @@ void QtGuiApplication::startWork()
 		oneWorkThread.quit();
 		oneWorkThread.wait();
 		ui.runButton->setText(u8"运行");
+		showMsg(tr(u8"程序运行停止。。。"));
 	}
 	else
 	{
@@ -155,7 +156,8 @@ void QtGuiApplication::startWork()
 		plcWorkThread.start();
 		oneWorkThread.start();
 		emit startThread();
-		ui.runButton->setText(u8"暂停"); 
+		ui.runButton->setText(u8"暂停");
+		showMsg(tr(u8"程序开始运行。。。"));
 	}
 }
 

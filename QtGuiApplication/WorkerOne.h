@@ -20,7 +20,7 @@ signals:
 	void sendError();
 
 public slots:
-	void initAll(QString portName);
+	void initAll();
 	void recTrigger(std::string value);
 	//void scanPortReceive();
 	void stopRunning();
