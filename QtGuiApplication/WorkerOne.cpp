@@ -16,6 +16,6 @@ void WorkerOne::initAll(QString portName)
 {
 }
 
-void WorkerOne::recTrigger(QString value)
+void WorkerOne::recTrigger(std::string value)
 {
 }

@@ -13,20 +13,21 @@ class WorkerOmron : public QObject
 public:
 	WorkerOmron(QObject *parent = Q_NULLPTR);
 	~WorkerOmron();
-	void stopRunning();
 
 signals:
 	//void workDone();
 	void workMsgShow(QString msg);
 	void plcPortSender();
-	void triggerOne(QString value);
+	void triggerOne(std::string value);
+	void sendError();
 
 public slots:
-	void initAll(QString portName);
+	void initAll();
 	void plcPortSend();
 	void plcPortReceive();
 	void plcRecTimeOut();
 	void add2SendMsg(std::string msg);
+	void stopRunning();
 
 private:
 	QSerialPort *plcPort;
@@ -41,6 +42,4 @@ private:
 	std::vector<std::string> msgs;
 	const std::string checkTrigger = "123456\r";
 	const std::string resetTriggerOne = "";
-	const std::string sendOKOne = "";
-	const std::string sendNGOne = "";
 };

@@ -1,5 +1,6 @@
 #include "WorkerOmron.h"
 #include "log4cplus/log4cplus.h"
+#include <QSettings>
 
 #define GET_LOGGER(x) log4cplus::Logger::getInstance(LOG4CPLUS_TEXT(x))
 
@@ -24,8 +25,9 @@ WorkerOmron::~WorkerOmron()
 	delete timer;
 }
 
-void WorkerOmron::initAll(QString portName)
+void WorkerOmron::initAll()
 {
+	QSettings configIni("config/config.ini", QSettings::IniFormat);
 	connect(this, &WorkerOmron::plcPortSender, this, &WorkerOmron::plcPortSend);
 	plcPort = new QSerialPort();
 	plcPort->setBaudRate(QSerialPort::Baud115200);
@@ -33,7 +35,7 @@ void WorkerOmron::initAll(QString portName)
 	plcPort->setFlowControl(QSerialPort::NoFlowControl);
 	plcPort->setParity(QSerialPort::EvenParity);
 	plcPort->setStopBits(QSerialPort::TwoStop);
-	plcPort->setPortName(portName);
+	plcPort->setPortName(configIni.value("serial/plc", "COM3").toString());
 	connect(plcPort, &QSerialPort::readyRead, this, &WorkerOmron::plcPortReceive);
 	if (!plcPort->open(QIODevice::ReadWrite))
 	{

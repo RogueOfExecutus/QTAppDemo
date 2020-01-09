@@ -22,14 +22,15 @@ public:
 	void closeEvent(QCloseEvent* e);
 
 signals:
-	void startThread(QString portName);
+	void startThread();
 	void stopThread();
 
 private:
 	Ui::QtGuiApplicationClass ui;
 	log4cplus::Initializer initializer;
-	QThread plcWorkThread;
-	WorkerOmron *plcWorker;
+	QThread plcWorkThread, oneWorkThread;
+	WorkerOmron* plcWorker;
+	WorkerOne* oneWorker;
 	bool runningFlag;
 	void initConfig();
 	void writeConfig();
@@ -42,4 +43,5 @@ public slots:
 	void startWork();
 	void configWindow();
 	void showMsg(QString str);
+	void recError();
 };

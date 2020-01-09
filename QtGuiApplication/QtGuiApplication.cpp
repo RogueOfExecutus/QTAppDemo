@@ -1,5 +1,6 @@
 #include "QtGuiApplication.h"
 #include "ConfigGuiClass.h"
+#include <QMetaType>
 //#include "opencv2/opencv.hpp"
 
 #define GET_LOGGER(x) log4cplus::Logger::getInstance(LOG4CPLUS_TEXT(x))
@@ -17,6 +18,7 @@ QtGuiApplication::QtGuiApplication(QWidget *parent)
 	initLog4cplus("serial", "./log/serial.log");
 	initLog4cplus("mes", "./log/mes.log");
 	runningFlag = false;
+	qRegisterMetaType<std::string>("std::string");
 }
 
 void QtGuiApplication::showMsg(QString str)
@@ -29,6 +31,17 @@ void QtGuiApplication::showMsg(QString str)
 	}
 	ui.textBrowser->setText(showText);
 	ui.textBrowser->moveCursor(QTextCursor::End);
+}
+
+void QtGuiApplication::recError()
+{
+	runningFlag = false;
+	emit stopThread();
+	plcWorkThread.quit();
+	plcWorkThread.wait();
+	oneWorkThread.quit();
+	oneWorkThread.wait();
+	ui.runButton->setText(u8"运行");
 }
 
 void QtGuiApplication::closeEvent(QCloseEvent* e)
@@ -107,6 +120,8 @@ void QtGuiApplication::startWork()
 		emit stopThread();
 		plcWorkThread.quit();
 		plcWorkThread.wait();
+		oneWorkThread.quit();
+		oneWorkThread.wait();
 		ui.runButton->setText(u8"运行");
 	}
 	else
@@ -119,13 +134,27 @@ void QtGuiApplication::startWork()
 		writeConfig();
 		plcWorker = new WorkerOmron();
 		plcWorker->moveToThread(&plcWorkThread);
+		oneWorker = new WorkerOne();
+		oneWorker->moveToThread(&oneWorkThread);
+
 		connect(this, &QtGuiApplication::startThread, plcWorker, &WorkerOmron::initAll);
 		connect(this, &QtGuiApplication::stopThread, plcWorker, &WorkerOmron::stopRunning, Qt::DirectConnection);
 		connect(&plcWorkThread, &QThread::finished, plcWorker, &QObject::deleteLater);
 		connect(plcWorker, &WorkerOmron::workMsgShow, this, &QtGuiApplication::showMsg);
+		connect(plcWorker, &WorkerOmron::sendError, this, &QtGuiApplication::recError);
+		connect(plcWorker, &WorkerOmron::triggerOne, oneWorker, &WorkerOne::recTrigger);
+
+		connect(this, &QtGuiApplication::startThread, oneWorker, &WorkerOne::initAll);
+		connect(this, &QtGuiApplication::stopThread, oneWorker, &WorkerOne::stopRunning, Qt::DirectConnection);
+		connect(&oneWorkThread, &QThread::finished, oneWorker, &QObject::deleteLater);
+		connect(oneWorker, &WorkerOne::workMsgShow, this, &QtGuiApplication::showMsg);
+		connect(oneWorker, &WorkerOne::answer2plc, plcWorker, &WorkerOmron::add2SendMsg, Qt::DirectConnection);
+		connect(oneWorker, &WorkerOne::sendError, this, &QtGuiApplication::recError);
+
 		runningFlag = true;
 		plcWorkThread.start();
-		emit startThread(ui.comboBoxPLC->currentText());
+		oneWorkThread.start();
+		emit startThread();
 		ui.runButton->setText(u8"暂停"); 
 	}
 }
