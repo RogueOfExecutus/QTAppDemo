@@ -64,7 +64,7 @@ void QtGuiApplication::closeEvent(QCloseEvent* e)
 void QtGuiApplication::initConfig()
 {
 	//Qt中使用QSettings类读写ini文件  
-   //QSettings构造函数的第一个参数是ini文件的路径,第二个参数表示针对ini文件,第三个参数可以缺省  
+    //QSettings构造函数的第一个参数是ini文件的路径,第二个参数表示针对ini文件,第三个参数可以缺省  
 	QSettings configIni("config/config.ini", QSettings::IniFormat);
 	//向ini文件中写入内容,setValue函数的两个参数是键值对
 	logLevel = configIni.value("log/LogLevel", 20000).toInt();
@@ -83,10 +83,10 @@ void QtGuiApplication::writeConfig()
 {
 	//QSettings构造函数的第一个参数是ini文件的路径,第二个参数表示针对ini文件,第三个参数可以缺省  
 	QSettings configIni("config/config.ini", QSettings::IniFormat);
-	configIni.setValue("log/LogLevel", logLevel);
+	//configIni.setValue("log/LogLevel", logLevel);
 	configIni.setValue("serial/plc", ui.comboBoxPLC->currentText());
 	configIni.setValue("serial/scanner", ui.comboBoxScanner->currentText());
-	configIni.setValue("config/EOFCR", isCR);
+	//configIni.setValue("config/EOFCR", isCR);
 }
 
 void QtGuiApplication::initLog4cplus(std::string name, std::string path)

@@ -39,6 +39,7 @@ void WorkerOmron::initAll()
 	if (!plcPort->open(QIODevice::ReadWrite))
 	{
 		emit workMsgShow(u8"´ò¿ª´®¿ÚÊ§°Ü");
+		emit sendError();
 		return;
 	}
 	timer = new QTimer();
